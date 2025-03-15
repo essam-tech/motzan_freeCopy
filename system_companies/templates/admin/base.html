@@ -1,0 +1,14 @@
+{% comment %} {% load i18n %}
+{% load static %}
+{% get_current_language as CURRENT_LANG %}
+<html lang="{{ CURRENT_LANG }}" dir="{% if CURRENT_LANG == 'ar' %}rtl{% else %}ltr{% endif %}">
+<head>
+    {% if LANGUAGE_CODE == 'ar' %}
+        <link rel="stylesheet" href="{% static 'css/rtl.css' %}">
+    {% else %}
+        <link rel="stylesheet" href="{% static 'css/ltr.css' %}">
+    {% endif %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_styles.css' %}">
+
+</head>  {% endcomment %}

@@ -1,0 +1,4 @@
+env = truck
+proj = Mutazan_weight
+app main= companies_manager  	التطبيق الرئيسي الخاص بالجمارك
+app companies = system_companies     التطبيق الخاص بالشركات
