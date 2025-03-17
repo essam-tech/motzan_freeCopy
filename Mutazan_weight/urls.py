@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from system_companies.views import *
 from django.conf.urls.i18n import set_language
+from companies_manager.views import  CompanyListAPIView  # استيراد الـ API
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,8 @@ urlpatterns = [
     # path('', include('admin_adminlte.urls')),
     path('', include('system_companies.urls')),
     path('set_language/', set_language, name='set_language'),
+    path('api/companies/', CompanyListAPIView.as_view(), name='company_list_api'),
+
 ]
 
 if settings.DEBUG:

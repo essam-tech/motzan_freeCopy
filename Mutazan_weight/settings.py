@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+from datetime import timedelta
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,7 @@ SECRET_KEY = 'django-insecure-rj#-z^kx3j+1ay397otg6j8m_8#v^$^$jys6&41vy^&6le)ezc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.150.162', '*']
 
 CSRF_TRUSTED_ORIGINS = [ 'https://*' ]
 
@@ -47,6 +49,8 @@ SHARED_APPS = [
     'django_htmx',
     'allauth',
     'allauth.account',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 TENANT_APPS = [
@@ -57,7 +61,26 @@ TENANT_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'system_companies',
+    
+
 ]
+
+# Add to REST_FRAMEWORK
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # مدة صلاحية التوكن الرئيسي
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # مدة صلاحية التوكن الاحتياطي
+    'BLACKLIST_AFTER_ROTATION': True,  # تفعيل القائمة السوداء عند تجديد التوكن
+    'UPDATE_LAST_LOGIN': True,
+}
+
 
 
 

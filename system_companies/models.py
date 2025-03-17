@@ -124,31 +124,6 @@ class Entry_and_exit(models.Model):  # جدول عمليات الدخول وال
 # -----------------------------------------------------------
 #  ----------------------- المستخدمين----------------------------
 
-# ✅ إنشاء نموذج المستخدم المخصص
-# class CustomUser(AbstractUser):
-#     address = models.CharField(max_length=50, verbose_name="العنوان")
-#     phone_number = models.CharField(
-#         max_length=15,
-#         validators=[RegexValidator(
-#             regex=r'^\+?\d{9,15}$',
-#             message="رقم الهاتف يجب أن يكون بين 9 و 15 رقمًا ويمكن أن يبدأ بعلامة '+'"
-#         )],
-#         verbose_name="رقم الهاتف"
-#     )
-#     image = models.ImageField(upload_to="user_company_images/%y/%m/%d", verbose_name="الصورة")
-
-#     # ✅ حل مشكلة التعارض بإضافة related_name جديد
-#     groups = models.ManyToManyField(Group, related_name="custom_user_groups", blank=True)
-#     user_permissions = models.ManyToManyField(Permission, related_name="custom_user_permissions", blank=True)
-
-#     def __str__(self):
-#         return self.username
-
-
-
-
-# -----------------------------------------------------------
-#  ----------------------- المواد----------------------------
 class Material(models.Model):
     # الفئات المتاحة
     CATEGORY_CHOICES = [
@@ -358,64 +333,6 @@ def create_invoice(sender, instance, created, **kwargs):
 
 
 
-# جدول الاتصال
-# class Connection(models.Model):
-#     CONNECTION_TYPES = [
-#         ('USB', 'USB'),
-#         ('WiFi', 'WiFi'),
-#         ('Serial', 'Serial'),
-#         ('API', 'API')
-#     ]
-    
-#     connection_name = models.CharField(max_length=10, choices=CONNECTION_TYPES, verbose_name="نوع الاتصال")
-#     date_and_tim = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الإضافة")
-
-#     class Meta:
-#         verbose_name = "الاتصال"
-#         verbose_name_plural = "الاتصالات"
-
-#     def __str__(self):
-#         return self.connection_name
-# -----------------------------------------------------------
-#  ----------------------- الاجهزه----------------------------
-
-
-# def validate_ip_address(ip):
-#     if not is_camera_reachable(ip):
-#         raise ValidationError(f"لا يمكن الوصول إلى الجهاز عبر IP: {ip}")
-# def validate_camera_stream(ip):
-#     if not is_camera_streaming(ip):
-#         raise ValidationError(f"الكاميرا عبر IP {ip} غير متاحة للبث!")
-# def validate_serial_connection(port):
-#     if not is_serial_device_available(port):
-#         raise ValidationError(f"الجهاز غير متصل بالمنفذ {port}")
-
-# class Devices(models.Model):
-
-#     CONNECTION_TYPES = [
-#         ('wifi', 'WiFi'),
-#         ('serial', 'Serial'),
-#     ]
-
-#     name_devices = models.CharField(max_length=20, verbose_name="اسم الجهاز")
-#     installation_date = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ التثبيت")
-#     address_ip = models.GenericIPAddressField(verbose_name="عنوان IP", validators=[validate_ip_address and validate_camera_stream and validate_serial_connection])
-
-#     device_status = models.BooleanField(default=True, verbose_name="حالة الجهاز")
-#     location = models.CharField(max_length=20, verbose_name="موقع الجهاز")
-    
-#     # تعيين اتصال افتراضي
-#     connection_type = models.CharField(max_length=10, choices=CONNECTION_TYPES, verbose_name="نوع الاتصال")
-
-#     class Meta:
-#         verbose_name = "الجهاز"
-#         verbose_name_plural = "الأجهزة"
-
-#     def __str__(self):
-#         return f"{self.name_devices} ({self.address_ip})"
-
-# -----------------------------------------------------------
-#  -----------------------  اعدادات الاجهزه----------------------------
 
 class Devices(models.Model):
 
@@ -580,19 +497,6 @@ class Attendance(models.Model):
         verbose_name = "سجل الدوام"
         verbose_name_plural = "سجلات الدوام"
 
-    # def calculate_total_hours(self):
-    #     """حساب عدد ساعات العمل تلقائيًا عند تسجيل الخروج"""
-    #     if self.check_in_time and self.check_out_time:
-    #         from datetime import datetime
-    #         fmt = "%H:%M:%S"
-    #         in_time = datetime.strptime(str(self.check_in_time), fmt)
-    #         out_time = datetime.strptime(str(self.check_out_time), fmt)
-    #         total = out_time - in_time
-    #         self.total_hours = round(total.total_seconds() / 3600, 2)
-    
-    # def save(self, *args, **kwargs):
-    #     self.calculate_total_hours()
-    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.date # ✅ تصحيح خطأ في `usermame` إلى `username`
