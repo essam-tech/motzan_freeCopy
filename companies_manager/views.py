@@ -100,17 +100,5 @@ class CustomLoginView(LoginView):
         """ إعادة التوجيه بعد تسجيل الدخول """
         return "/dashboard/"  # يمكنك تغييرها إلى المسار المناسب
 
-# def company_list(request):
-#     companies = Company.objects.all()
-#     return render(request, 'companies/company_list.html', {'companies': companies})
 
-# def company_detail(request, company_id):
-#     company = get_object_or_404(Company, id=company_id)
-#     weight_cards = WeightCard.objects.filter(company=company)  # جلب بطاقات الوزن الخاصة بالشركة
-    
-#     context = {
-#         'company': company,
-#         'weight_cards': weight_cards,
-#     }
-#     return render(request, 'companies/company_detail.html', context)
     
