@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-rj#-z^kx3j+1ay397otg6j8m_8#v^$^$jys6&41vy^&6le)ezc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.150.162', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
 
 CSRF_TRUSTED_ORIGINS = [ 'https://*' ]
 
@@ -50,7 +50,9 @@ SHARED_APPS = [
     'allauth',
     'allauth.account',
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt',
+
 ]
 
 TENANT_APPS = [
@@ -72,15 +74,25 @@ REST_FRAMEWORK = {
     ],
 }
 
+# SIMPLE_JWT = {
+#     'AUTH_HEADER_TYPES': ('JWT',),
+    
+#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), 
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  
+#  #   'BLACKLIST_AFTER_ROTATION': False, 
+#     'UPDATE_LAST_LOGIN': True,
+# }
+
+
+
+
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
-    
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # مدة صلاحية التوكن الرئيسي
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # مدة صلاحية التوكن الاحتياطي
-    'BLACKLIST_AFTER_ROTATION': True,  # تفعيل القائمة السوداء عند تجديد التوكن
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60), # مدة صلاحية التوكن الرئيسي
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),# مدة صلاحية التوكن الاحتياطي
+    'BLACKLIST_AFTER_ROTATION': False,     # تفعيل القائمة السوداء عند تجديد التوكن
     'UPDATE_LAST_LOGIN': True,
 }
-
 
 
 

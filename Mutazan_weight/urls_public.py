@@ -21,6 +21,7 @@ from django.conf import settings
 from companies_manager.admin import tenant_admin_site
 from companies_manager.views import *
 from django.conf.urls.i18n import set_language
+#-------------توكن---------------
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from companies_manager.views import CustomTokenObtainPairView
 
@@ -32,13 +33,19 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('system_companies.urls')),
     path('set_language/', set_language, name='set_language'),
+#-----------مسارات التوكن و الapi--------------------
     path('api/', include('companies_manager.urls')),  # تأكد من أن المسارات الخاصة بالـ API موجودة في ملف `urls.py` الخاص بالشركات
      # الحصول على التوكن
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-     # تجديد التوكن
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),  # تسجيل الدخول والحصول على التوكن
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # تجديد التوكن عند انتهاء صلاحيته
+    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    #  # تجديد التوكن
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),  # تسجيل الدخول والحصول على التوكن
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # تجديد التوكن عند انتهاء صلاحيته
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+
+
+#------------------الى هنا-----------------------------
 ]
 
 if settings.DEBUG:

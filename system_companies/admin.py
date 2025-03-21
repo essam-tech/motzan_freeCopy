@@ -437,7 +437,7 @@ class DevicesAdmin(admin.ModelAdmin):
     list_display = ['name_devices', 'address_ip', 'connection_type', 'device_status','location', 'action_buttons']
     search_fields = ['name_devices']
     date_hierarchy = 'last_date_settings_updated'
-    exclude = ('username', 'password')  # إخفاء الحقول من نموذج الإدخال العادي
+    exclude = ('user    ', 'password')  # إخفاء الحقول من نموذج الإدخال العادي
 
     class Media:
         js = ('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js',  # تحميل jQuery

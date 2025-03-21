@@ -8,7 +8,7 @@
             <a href="{% url 'company_detail' company.id %}" style="text-decoration: none;"> 
                 <div class="card text-center shadow-lg">
                     <div class="card-header bg-primary text-white">
-                        <h5>{{ company.name }}</h5>
+                        <h5>{{ company.company_name }}</h5>
                     </div>
                     <div class="card-body">
                         <img src="{{ company.logo.url }}" class="rounded-circle" width="100" height="100" alt="Logo">

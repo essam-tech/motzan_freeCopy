@@ -2,7 +2,7 @@ from django.db import models
 from django_tenants.models import TenantMixin, DomainMixin
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
-from django.db import IntegrityError, connection
+from django.db import connection, transaction, IntegrityError
 from django_tenants.utils import schema_context
 
 User = get_user_model()  # 🔥 جلب نموذج المستخدم الصحيح
@@ -50,16 +50,20 @@ class Company(TenantMixin):
     def save(self, *args, **kwargs):
         """ عند حفظ Tenant جديد، يتم إنشاء الأسكيما وإضافة المستخدم الإداري إليها """
         is_new = self._state.adding  # التحقق مما إذا كان الكائن جديدًا أم لا
+        
+        # ✅ تعطيل القيود أثناء تنفيذ الحفظ
+        with connection.cursor() as cursor:
+            cursor.execute("SET CONSTRAINTS ALL DEFERRED;")  # تعطيل القيود مؤقتًا
+            
         super().save(*args, **kwargs)  # حفظ الشركة أولاً
 
         if is_new:
-            # ✅ إنشاء دومين خاص بالشركة
-            base_domain = f"{self.company_name.lower()}.localhost"  # استخدام الحقل الصحيح
+            base_domain = f"{self.company_name.lower()}.localhost"
             domain_name = base_domain
             counter = 1
 
             while Domain.objects.filter(domain=domain_name).exists():
-                domain_name = f"{self.company_name.lower()}{counter}.localhost"  # استخدام الحقل الصحيح
+                domain_name = f"{self.company_name.lower()}{counter}.localhost"
                 counter += 1
 
             try:
@@ -67,20 +71,22 @@ class Company(TenantMixin):
             except IntegrityError:
                 print("❌ فشل إنشاء الدومين بسبب خطأ في النزاهة.")
 
-            # ✅ التأكد من أن المستخدم الإداري موجود قبل إضافته للأسكيما
             if self.admin_user:
-                with schema_context(self.schema_name):  # الانتقال إلى الأسكيما الخاصة بالشركة
+                with schema_context(self.schema_name):  
                     if not User.objects.filter(username=self.admin_user.username).exists():
-                        # ✅ إنشاء المستخدم داخل الأسكيما بنفس بياناته الأصلية
                         tenant_admin = User.objects.create_superuser(
                             username=self.admin_user.username,
                             email=self.admin_user.email,
                             password="Admin@123"
                         )
-                        tenant_admin.is_staff = True  # 🔥 إعطاؤه صلاحيات دخول لوحة التحكم
-                        tenant_admin.is_superuser = True  # 🔥 إعطاؤه جميع الصلاحيات
-                        tenant_admin.is_active = True  # 🔥 تفعيل الحساب
+                        tenant_admin.is_staff = True
+                        tenant_admin.is_superuser = True
+                        tenant_admin.is_active = True
                         tenant_admin.save()
+
+        # ✅ إعادة تفعيل القيود بعد التنفيذ
+        with connection.cursor() as cursor:
+            cursor.execute("SET CONSTRAINTS ALL IMMEDIATE;")
 
     def delete(self, *args, **kwargs):
         """ حذف الشركة مع الأسكيما الخاصة بها من قاعدة البيانات """
@@ -108,6 +114,7 @@ class Domain(DomainMixin):
         return self.domain
 
 
+
 # -----------------------------------------------------------
 #  ------------------------نوع المخالفات----------------------------
 
@@ -130,7 +137,7 @@ class ViolationsType(models.Model):
 #  ---------------------------------------------------
 
 class TransferredWeightCard(models.Model):
-    company_name = models.CharField(max_length=255, verbose_name="اسم الشركة")
+    name = models.CharField(max_length=255, verbose_name="اسم الشركة")
     plate_number = models.CharField(max_length=50, verbose_name="رقم اللوحة")
     empty_weight = models.DecimalField(max_digits=10, decimal_places=5, verbose_name="الوزن الفارغ", null=True, blank=True)
     loaded_weight = models.DecimalField(max_digits=10, decimal_places=5, verbose_name="الوزن المحمل", null=True, blank=True)

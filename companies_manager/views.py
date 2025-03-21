@@ -1,7 +1,7 @@
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect
 from django_tenants.utils import schema_context
-from .models import Company
+from .models import Company, User
 # companies_manager/views.py
 from django.shortcuts import render, get_object_or_404
 from companies_manager.models import Company, TransferredWeightCard
@@ -13,9 +13,15 @@ from rest_framework import status
 from .Serializer import CompanySerializer
 from .models import Company
 from django.http import Http404
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+
+
+
+#------------كود التوكن-----------------
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -25,6 +31,28 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]  # السماح للجميع باستخدام هذه الواجهة
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        # التحقق من اسم المستخدم وكلمة المرور
+        user = User.objects.filter(username=username).first()
+
+        if user and user.check_password(password):
+            # إنشاء توكن JWT
+            refresh = RefreshToken.for_user(user)
+            access_token = refresh.access_token
+
+            return Response({
+                'refresh': str(refresh),
+                'access': str(access_token),
+            })
+        else:
+            return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 #----------------------كلاس الapi----------------------
 # عرض قائمة الشركات أو إضافة شركة جديدة
@@ -72,7 +100,7 @@ def company_weight_cards(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     
     # جلب البيانات المنقولة لعرضها
-    transferred_cards = TransferredWeightCard.objects.filter(company_name=company.name)
+    transferred_cards = TransferredWeightCard.objects.filter(company_name=company.company_name)
     print(f"تم العثور على {transferred_cards.count()} بطاقة وزن منقولة.")  # للتحقق من البيانات
     
     return render(request, 'companies/company_detail.html', {  # المسار الصحيح للقالب
@@ -100,5 +128,8 @@ class CustomLoginView(LoginView):
         """ إعادة التوجيه بعد تسجيل الدخول """
         return "/dashboard/"  # يمكنك تغييرها إلى المسار المناسب
 
+#321321321
+#sdsdsdsds
+#dsfsdfs
 
     
